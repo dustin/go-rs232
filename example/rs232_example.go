@@ -4,7 +4,7 @@ import (
 	"log"
 	"flag"
 	"bufio"
- 	"rs232"
+	"github.com/dustin/rs232.go"
 )
 
 func main() {
