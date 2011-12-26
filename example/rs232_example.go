@@ -1,10 +1,10 @@
 package main
 
 import (
-	"log"
-	"flag"
 	"bufio"
+	"flag"
 	"github.com/dustin/rs232.go"
+	"log"
 )
 
 func main() {
@@ -15,6 +15,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error opening port: %s", err)
 	}
+	defer port.Close()
 
 	r := bufio.NewReader(&port)
 	for {

@@ -8,7 +8,6 @@ package rs232
 */
 import "C"
 
-
 import (
 	"os"
 	"syscall"
@@ -41,7 +40,7 @@ const (
 // Example:  rs232.OpenPort("/dev/ttyS0", 115200, rs232.S_8N1)
 func OpenPort(port string, baudRate int, serconf SerConf) (rv SerialPort, err error) {
 	f, open_err := os.OpenFile(port,
-		os.O_RDWR | os.O_NOCTTY | os.O_NDELAY,
+		os.O_RDWR|os.O_NOCTTY|os.O_NDELAY,
 		0666)
 	if open_err != nil {
 		err = open_err
@@ -63,20 +62,23 @@ func OpenPort(port string, baudRate int, serconf SerConf) (rv SerialPort, err er
 		panic("cfsetospeed failed")
 	}
 	switch serconf {
-	case S_8N1: {
+	case S_8N1:
+		{
 			options.c_cflag &^= C.PARENB
 			options.c_cflag &^= C.CSTOPB
 			options.c_cflag &^= C.CSIZE
 			options.c_cflag |= C.CS8
 		}
-	case S_7E1: {
+	case S_7E1:
+		{
 			options.c_cflag |= C.PARENB
 			options.c_cflag &^= C.PARODD
 			options.c_cflag &^= C.CSTOPB
 			options.c_cflag &^= C.CSIZE
 			options.c_cflag |= C.CS7
 		}
-	case S_7O1: {
+	case S_7O1:
+		{
 			options.c_cflag |= C.PARENB
 			options.c_cflag |= C.PARODD
 			options.c_cflag &^= C.CSTOPB
