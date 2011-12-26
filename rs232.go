@@ -1,3 +1,4 @@
+// The RS232 package lets you access old serial junk from go
 package rs232
 
 /*
@@ -13,6 +14,7 @@ import (
 	"syscall"
 )
 
+// This is your serial port handle.
 type SerialPort struct {
 	port *os.File
 }
@@ -24,6 +26,7 @@ func baudConversion(rate int) (flag _Ctype_speed_t) {
 	return _Ctype_speed_t(rate)
 }
 
+// SerConf represents the basic serial configuration to provide to OpenPort.
 type SerConf int
 
 const (
@@ -32,6 +35,10 @@ const (
 	S_7O1
 )
 
+// Opens and returns a non-blocking serial port.
+// The device, baud rate, and SerConf is specified.
+//
+// Example:  rs232.OpenPort("/dev/ttyS0", 115200, rs232.S_8N1)
 func OpenPort(port string, baudRate int, serconf SerConf) (rv SerialPort, err error) {
 	f, open_err := os.OpenFile(port,
 		os.O_RDWR | os.O_NOCTTY | os.O_NDELAY,
@@ -93,10 +100,17 @@ func OpenPort(port string, baudRate int, serconf SerConf) (rv SerialPort, err er
 	return
 }
 
+// Read from the port.
 func (port *SerialPort) Read(p []byte) (n int, err error) {
 	return port.port.Read(p)
 }
 
+// Write to the port.
 func (port *SerialPort) Write(p []byte) (n int, err error) {
 	return port.port.Write(p)
+}
+
+// Close the port.
+func (port *SerialPort) Close() error {
+	return port.port.Close()
 }
