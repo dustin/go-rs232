@@ -11,7 +11,10 @@ func main() {
 	flag.Parse()
 	portString := flag.Args()[0]
 	log.Printf("Opening '%s'", portString)
-	port := rs232.OpenSerialPort(portString)
+	port, err := rs232.OpenPort(portString, 57600, rs232.S_8N1)
+	if err != nil {
+		log.Fatalf("Error opening port: %s", err)
+	}
 
 	r := bufio.NewReader(&port)
 	for {
