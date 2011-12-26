@@ -1,0 +1,8 @@
+#*
+*.6
+*.a
+*.o
+*~
+/example/rs232_example
+6.out
+_*
