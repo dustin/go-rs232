@@ -40,7 +40,7 @@ const (
 // Example:  rs232.OpenPort("/dev/ttyS0", 115200, rs232.S_8N1)
 func OpenPort(port string, baudRate int, serconf SerConf) (rv SerialPort, err error) {
 	f, open_err := os.OpenFile(port,
-		os.O_RDWR|os.O_NOCTTY|os.O_NDELAY,
+		syscall.O_RDWR|syscall.O_NOCTTY|syscall.O_NDELAY,
 		0666)
 	if open_err != nil {
 		err = open_err
@@ -95,7 +95,7 @@ func OpenPort(port string, baudRate int, serconf SerConf) (rv SerialPort, err er
 		panic("tcsetattr failed")
 	}
 
-	if syscall.SetNonblock(fd, false) != nil {
+	if syscall.SetNonblock(int(fd), false) != nil {
 		panic("Error disabling blocking")
 	}
 
