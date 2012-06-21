@@ -5,6 +5,8 @@ package rs232
 #include <stdlib.h>
 #include <fcntl.h>
 #include <termios.h>
+
+void initBaudRates();
 */
 import "C"
 
@@ -21,29 +23,12 @@ type SerialPort struct {
 }
 
 func init() {
-	baudConversionMap[0] = C.B0
-	baudConversionMap[50] = C.B50
-	baudConversionMap[75] = C.B75
-	baudConversionMap[110] = C.B110
-	baudConversionMap[134] = C.B134
-	baudConversionMap[150] = C.B150
-	baudConversionMap[200] = C.B200
-	baudConversionMap[300] = C.B300
-	baudConversionMap[600] = C.B600
-	baudConversionMap[1200] = C.B1200
-	baudConversionMap[1800] = C.B1800
-	baudConversionMap[2400] = C.B2400
-	baudConversionMap[4800] = C.B4800
-	baudConversionMap[9600] = C.B9600
-	baudConversionMap[19200] = C.B19200
-	baudConversionMap[38400] = C.B38400
-	// baudConversionMap[7200] = C.B7200
-	// baudConversionMap[14400] = C.B14400
-	// baudConversionMap[28800] = C.B28800
-	baudConversionMap[57600] = C.B57600
-	// baudConversionMap[76800] = C.B76800
-	baudConversionMap[115200] = C.B115200
-	baudConversionMap[230400] = C.B230400
+	C.initBaudRates()
+}
+
+//export addBaudRate
+func addBaudRate(num int, val _Ctype_speed_t) {
+	baudConversionMap[num] = val
 }
 
 func baudConversion(rate int) (flag _Ctype_speed_t) {
