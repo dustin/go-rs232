@@ -39,7 +39,7 @@ func baudConversion(rate int) (flag _Ctype_speed_t) {
 type SerConf int
 
 const (
-	S_8N1 = iota
+	S_8N1 SerConf = iota
 	S_7E1
 	S_7O1
 )
