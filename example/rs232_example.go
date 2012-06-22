@@ -17,7 +17,7 @@ func main() {
 	}
 	defer port.Close()
 
-	r := bufio.NewReader(&port)
+	r := bufio.NewReader(port)
 	for {
 		line, _, err := r.ReadLine()
 		if err != nil {

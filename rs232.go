@@ -48,7 +48,8 @@ const (
 // The device, baud rate, and SerConf is specified.
 //
 // Example:  rs232.OpenPort("/dev/ttyS0", 115200, rs232.S_8N1)
-func OpenPort(port string, baudRate int, serconf SerConf) (rv SerialPort, err error) {
+func OpenPort(port string, baudRate int, serconf SerConf) (rv *SerialPort, err error) {
+	rv = &SerialPort{}
 	f, open_err := os.OpenFile(port,
 		syscall.O_RDWR|syscall.O_NOCTTY|syscall.O_NDELAY,
 		0666)

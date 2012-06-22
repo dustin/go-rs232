@@ -34,5 +34,5 @@ func main() {
 		log.Fatalf("Error opening port: %s", err)
 	}
 
-	io.Copy(os.Stdout, &port)
+	io.Copy(os.Stdout, port)
 }
