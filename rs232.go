@@ -101,6 +101,8 @@ func OpenPort(port string, baudRate int, serconf SerConf) (rv *SerialPort, err e
 	options.c_cflag |= (C.CLOCAL | C.CREAD)
 	// no hardware flow control
 	options.c_cflag &^= C.CRTSCTS
+	// Don't EOF on a zero read, just block
+	options.c_cc[C.VMIN] = 1
 
 	if C.tcsetattr(C.int(fd), C.TCSANOW, &options) < 0 {
 		panic("tcsetattr failed")
