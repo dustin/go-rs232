@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/dustin/rs232.go"
+	"github.com/dustin/go-rs232"
 )
 
 func parseMode(s string) (rv rs232.SerConf) {

@@ -3,8 +3,9 @@ package main
 import (
 	"bufio"
 	"flag"
-	"github.com/dustin/rs232.go"
 	"log"
+
+	"github.com/dustin/go-rs232"
 )
 
 func main() {
