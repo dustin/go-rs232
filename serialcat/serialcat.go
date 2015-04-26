@@ -2,12 +2,20 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
 
 	"github.com/dustin/go-rs232"
 )
+
+func init() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s [args] /dev/tty.whatever\n", os.Args[0])
+		flag.PrintDefaults()
+	}
+}
 
 func parseMode(s string) (rv rs232.SerConf) {
 	switch s {
@@ -28,10 +36,15 @@ func main() {
 	mode := flag.String("mode", "8N1", "8N1 | 7E1 | 7O1")
 	flag.Parse()
 
-	port, err := rs232.OpenPort(flag.Arg(0), *baudRate,
-		parseMode(*mode))
+	path := flag.Arg(0)
+	if path == "" {
+		flag.Usage()
+		os.Exit(64)
+	}
+
+	port, err := rs232.OpenPort(path, *baudRate, parseMode(*mode))
 	if err != nil {
-		log.Fatalf("Error opening port: %s", err)
+		log.Fatalf("Error opening port %q: %s", port, err)
 	}
 
 	io.Copy(os.Stdout, port)
