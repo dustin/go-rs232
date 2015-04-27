@@ -48,14 +48,12 @@ const (
 // The device, baud rate, and SerConf is specified.
 //
 // Example:  rs232.OpenPort("/dev/ttyS0", 115200, rs232.S_8N1)
-func OpenPort(port string, baudRate int, serconf SerConf) (rv *SerialPort, err error) {
-	rv = &SerialPort{}
-	f, open_err := os.OpenFile(port,
-		syscall.O_RDWR|syscall.O_NOCTTY|syscall.O_NDELAY,
-		0666)
-	if open_err != nil {
-		err = open_err
-		return
+func OpenPort(port string, baudRate int, serconf SerConf) (*SerialPort, error) {
+	rv := &SerialPort{}
+	f, err := os.OpenFile(port,
+		syscall.O_RDWR|syscall.O_NOCTTY|syscall.O_NDELAY, 0666)
+	if err != nil {
+		return nil, err
 	}
 	rv.port = f
 
@@ -112,16 +110,16 @@ func OpenPort(port string, baudRate int, serconf SerConf) (rv *SerialPort, err e
 		panic("Error disabling blocking")
 	}
 
-	return
+	return rv, nil
 }
 
 // Read from the port.
-func (port *SerialPort) Read(p []byte) (n int, err error) {
+func (port *SerialPort) Read(p []byte) (int, error) {
 	return port.port.Read(p)
 }
 
 // Write to the port.
-func (port *SerialPort) Write(p []byte) (n int, err error) {
+func (port *SerialPort) Write(p []byte) (int, error) {
 	return port.port.Write(p)
 }
 
