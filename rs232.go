@@ -1,6 +1,8 @@
 // The RS232 package lets you access old serial junk from go
 package rs232
 
+//go:generate ./genc.sh
+
 /*
 #include <stdlib.h>
 #include <fcntl.h>

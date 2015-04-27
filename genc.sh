@@ -1,5 +1,7 @@
 #!/bin/sh
 
+out=rs232_c.c
+
 rates=$(cat <<EOF
 0
 50
@@ -38,7 +40,7 @@ rates=$(cat <<EOF
 4000000
 EOF)
 
-cat <<EOF
+cat > $out <<EOF
 #include <sys/types.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -55,9 +57,9 @@ EOF
 
 for r in $rates
 do
-    echo "#ifdef B$r"
-    echo "    addBaudRate($r, B$r);"
-    echo "#endif"
+    echo "#ifdef B$r" >> $out
+    echo "    addBaudRate($r, B$r);" >> $out
+    echo "#endif" >> $out
 done
 
-echo "}"
+echo "}" >> $out
