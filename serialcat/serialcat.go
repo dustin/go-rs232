@@ -17,18 +17,18 @@ func init() {
 	}
 }
 
-func parseMode(s string) (rv rs232.SerConf) {
-	switch s {
-	case "8N1":
-		rv = rs232.S_8N1
-	case "7E1":
-		rv = rs232.S_7E1
-	case "7O1":
-		rv = rs232.S_7O1
-	default:
+var modes = map[string]rs232.SerConf{
+	"8N1": rs232.S_8N1,
+	"7E1": rs232.S_7E1,
+	"7O1": rs232.S_7O1,
+}
+
+func parseMode(s string) rs232.SerConf {
+	rv, ok := modes[s]
+	if !ok {
 		log.Fatalf("Invalid mode: %v", s)
 	}
-	return
+	return rv
 }
 
 func main() {
