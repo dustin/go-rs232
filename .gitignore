@@ -3,8 +3,6 @@
 *.a
 *.o
 *~
-/example/example
-/example/rs232_example
 /serialcat/serialcat
 6.out
 _*
