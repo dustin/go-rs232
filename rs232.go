@@ -13,6 +13,7 @@ void initBaudRates();
 import "C"
 
 import (
+	"fmt"
 	"os"
 	"syscall"
 )
@@ -63,14 +64,17 @@ func OpenPort(port string, baudRate int, serconf SerConf) (*SerialPort, error) {
 
 	var options C.struct_termios
 	if C.tcgetattr(C.int(fd), &options) < 0 {
-		panic("tcgetattr failed")
+		defer f.Close()
+		return nil, fmt.Errorf("tcgetattr failed")
 	}
 
 	if C.cfsetispeed(&options, baudConversion(baudRate)) < 0 {
-		panic("cfsetispeed failed")
+		defer f.Close()
+		return nil, fmt.Errorf("cfsetispeed failed")
 	}
 	if C.cfsetospeed(&options, baudConversion(baudRate)) < 0 {
-		panic("cfsetospeed failed")
+		defer f.Close()
+		return nil, fmt.Errorf("cfsetospeed failed")
 	}
 	switch serconf {
 	case S_8N1:
@@ -105,11 +109,13 @@ func OpenPort(port string, baudRate int, serconf SerConf) (*SerialPort, error) {
 	options.c_cc[C.VMIN] = 1
 
 	if C.tcsetattr(C.int(fd), C.TCSANOW, &options) < 0 {
-		panic("tcsetattr failed")
+		defer f.Close()
+		return nil, fmt.Errorf("tcsetattr failed")
 	}
 
 	if syscall.SetNonblock(int(fd), false) != nil {
-		panic("Error disabling blocking")
+		defer f.Close()
+		return nil, fmt.Errorf("Error disabling blocking")
 	}
 
 	return rv, nil
