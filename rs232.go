@@ -121,6 +121,13 @@ func OpenPort(port string, baudRate int, serconf SerConf) (*SerialPort, error) {
 	return rv, nil
 }
 
+// SetNonblock enables nonblocking serial IO.
+func (port *SerialPort) SetNonblock() error {
+	fd := port.port.Fd()
+
+	return syscall.SetNonblock(int(fd), true)
+}
+
 // Read from the port.
 func (port *SerialPort) Read(p []byte) (int, error) {
 	return port.port.Read(p)
