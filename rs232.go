@@ -54,7 +54,7 @@ const (
 func OpenPort(port string, baudRate int, serconf SerConf) (*SerialPort, error) {
 	rv := &SerialPort{}
 	f, err := os.OpenFile(port,
-		syscall.O_RDWR|syscall.O_NOCTTY|syscall.O_NDELAY, 0666)
+		syscall.O_RDWR|syscall.O_NOCTTY, 0666)
 	if err != nil {
 		return nil, err
 	}
@@ -111,11 +111,6 @@ func OpenPort(port string, baudRate int, serconf SerConf) (*SerialPort, error) {
 	if C.tcsetattr(C.int(fd), C.TCSANOW, &options) < 0 {
 		defer f.Close()
 		return nil, fmt.Errorf("tcsetattr failed")
-	}
-
-	if syscall.SetNonblock(int(fd), false) != nil {
-		defer f.Close()
-		return nil, fmt.Errorf("Error disabling blocking")
 	}
 
 	return rv, nil
