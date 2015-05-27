@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"os"
 	"syscall"
+	"time"
 )
 
 var baudConversionMap = map[int]_Ctype_speed_t{}
@@ -114,6 +115,55 @@ func OpenPort(port string, baudRate int, serconf SerConf) (*SerialPort, error) {
 	}
 
 	return rv, nil
+}
+
+// SetInputAttr sets VMIN and VTIME for control serial reads.
+//
+// In non-canonical input processing mode, input is not assembled into
+// lines and input processing (erase, kill, delete, etc.) does not
+// occur. Two parameters control the behavior of this mode:
+// c_cc[VTIME] sets the character timer, and c_cc[VMIN] sets the
+// minimum number of characters to receive before satisfying the read.
+//
+// If MIN > 0 and TIME = 0, MIN sets the number of characters to
+//receive before the read is satisfied. As TIME is zero, the timer is
+//not used.
+//
+// If MIN = 0 and TIME > 0, TIME serves as a timeout value. The read
+//will be satisfied if a single character is read, or TIME is exceeded
+//(t = TIME *0.1 s). If TIME is exceeded, no character will be
+//returned.
+//
+// If MIN > 0 and TIME > 0, TIME serves as an inter-character
+//timer. The read will be satisfied if MIN characters are received, or
+//the time between two characters exceeds TIME. The timer is restarted
+//every time a character is received and only becomes active after the
+//first character has been received.
+//
+// If MIN = 0 and TIME = 0, read will be satisfied immediately. The
+//number of characters currently available, or the number of
+//characters requested will be returned. According to Antonino (see
+//contributions), you could issue a fcntl(fd, F_SETFL, FNDELAY);
+//before reading to get the same result.
+//
+// By modifying newtio.c_cc[VTIME] and newtio.c_cc[VMIN] all modes
+//described above can be tested.
+//
+// -- copied from http://tldp.org/HOWTO/Serial-Programming-HOWTO/x115.html
+func (port *SerialPort) SetInputAttr(minBytes int, timeout time.Duration) error {
+	fd := port.port.Fd()
+
+	var options C.struct_termios
+	if C.tcgetattr(C.int(fd), &options) < 0 {
+		return fmt.Errorf("tcgetattr failed")
+	}
+	options.c_cc[C.VMIN] = _Ctype_cc_t(minBytes)
+	options.c_cc[C.VTIME] = _Ctype_cc_t(timeout / (time.Second / 10))
+
+	if C.tcsetattr(C.int(fd), C.TCSANOW, &options) < 0 {
+		return fmt.Errorf("tcsetattr failed")
+	}
+	return nil
 }
 
 // SetNonblock enables nonblocking serial IO.
