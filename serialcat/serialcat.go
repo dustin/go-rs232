@@ -44,7 +44,7 @@ func main() {
 
 	port, err := rs232.OpenPort(path, *baudRate, parseMode(*mode))
 	if err != nil {
-		log.Fatalf("Error opening port %q: %s", port, err)
+		log.Fatalf("Error opening port %q: %s", path, err)
 	}
 
 	io.Copy(os.Stdout, port)
